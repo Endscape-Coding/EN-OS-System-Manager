@@ -1,5 +1,5 @@
 [package]
-name = "main1"
+name = "en-os-system-manager"
 version = "0.1.0"
 description = "EN-OS System Manager"
 authors = ["Endscape"]
