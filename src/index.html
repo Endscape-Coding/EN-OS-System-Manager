@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EN-OS System Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <style id="dynamic-styles"></style>
+</head>
+<body>
+
+    <button class="icon-btn settings-trigger" id="settingsBtn" aria-label="Settings">
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+    </button>
+
+    <main class="container">
+        <header class="app-header">
+            <h1 data-key="app_title">EN-OS System Manager</h1>
+            <p class="subtitle">GUI Settings for EN-OS</p>
+        </header>
+
+        <div class="main-layout">
+            <div class="grid-menu">
+                <button onclick="runProgram('driver')" class="card-btn">
+                    <span class="btn-icon">🔧</span>
+                    <div class="btn-content">
+                        <span class="btn-title" data-key="driver_manager">Driver Manager</span>
+                        <span class="btn-desc">Install GPU drivers</span>
+                    </div>
+                </button>
+
+                <button onclick="runProgram('pamac')" class="card-btn">
+                    <span class="btn-icon">📦</span>
+                    <div class="btn-content">
+                        <span class="btn-title" data-key="package_manager">Package Manager</span>
+                        <span class="btn-desc">Install any software</span>
+                    </div>
+                </button>
+
+                <button onclick="runProgram('rassist')" class="card-btn">
+                    <span class="btn-icon">🖥️</span>
+                    <div class="btn-content">
+                        <span class="btn-title" data-key="remote_assistant">Remote Assistant</span>
+                        <span class="btn-desc">Create Your Telegram bot</span>
+                    </div>
+                </button>
+
+                <button onclick="runProgram('zapret')" class="card-btn">
+                    <span class="btn-icon">🔒</span>
+                    <div class="btn-content">
+                        <span class="btn-title" data-key="zapret_manager">Zapret Manager</span>
+                        <span class="btn-desc">Free Internet for Russia</span>
+                    </div>
+                </button>
+            </div>
+
+            <div class="grid-menu">
+                </div>
+
+            <div class="tweaker-footer">
+                <button onclick="toggleTweaker()" class="mini-simple-btn">
+                    <span style="font-size: 1.1rem; opacity: 0.7;">⚡</span>
+                    <span data-key="mini_tweaker" style="font-size: 0.85rem; opacity: 0.8;">Mini Tweaker</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <div class="overlay" id="overlay" onclick="closeAll()"></div>
+
+    <div class="tweaker-modal" id="tweakerModal">
+        <div class="drawer-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 data-key="mini_tweaker" style="margin:0; font-size: 1.3rem; color: var(--accent-cyan);">Mini Tweaker</h2>
+            <button class="icon-btn" onclick="toggleTweaker()">✕</button>
+        </div>
+
+        <div class="tweak-list">
+            <label class="tweak-card">
+                <span class="tweak-title" data-key="zram_control">ZRAM Manager</span>
+                <input type="checkbox" id="check-zram" onchange="callTweak(this.checked ? 'zram_on' : 'zram_off')">
+                <div class="switch-ui"></div>
+            </label>
+
+            <label class="tweak-card">
+                <span class="tweak-title" data-key="pacman_keys">Pacman Key Manager</span>
+                <input type="checkbox" id="check-keys" onchange="callTweak(this.checked ? 'keys_on' : 'keys_off')">
+                <div class="switch-ui"></div>
+            </label>
+
+            <div class="tweak-card action-card" onclick="callTweak('refresh_mirrors')">
+                <span class="tweak-title" data-key="refresh_mirrors">Refresh Mirrors</span>
+                <span class="arrow-icon">➔</span>
+            </div>
+
+            <div class="tweak-card action-card" onclick="callTweak('clear_journal')">
+                <span class="tweak-title" data-key="clear_journal">Clear Journal (2w)</span>
+                <span class="arrow-icon">➔</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closeAll()"></div>
+
+    <aside class="settings-drawer" id="settingsPanel">
+        <div class="drawer-header">
+            <h2 data-key="settings">Настройки</h2>
+            <button class="icon-btn close-btn" onclick="toggleSettings()">✕</button>
+        </div>
+
+        <div class="drawer-content">
+            <div class="setting-group">
+                <label data-key="theme">Тема оформления</label>
+                <div class="theme-grid" id="themeList">
+                    <button class="theme-chip active" onclick="changeTheme('default')" data-theme="default">
+                        Default
+                    </button>
+                    </div>
+            </div>
+
+            <div class="setting-group">
+                <label data-key="language">Язык</label>
+                <select id="languageSelect" class="styled-select">
+                    <option value="en">English</option>
+                    <option value="ru">Русский</option>
+                    <option value="uk">Українська</option>
+                    <option value="es">Español</option>
+                    <option value="de">Deutsch</option>
+                    <option value="fr">Français</option>
+                    <option value="zh">中文</option>
+                    <option value="ja">日本語</option>
+                    <option value="ko">한국어</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+            </div>
+
+            <div class="setting-group developers-section">
+            <label data-key="developer">Developer: Endscape</label>
+            <div class="developer-links">
+                <div onclick="openExternal('https://github.com/Endscape-Coding/')" class="dev-link">
+                    <span class="dev-icon">📦</span>
+                    <span>GitHub</span>
+                </div>
+                <div onclick="openExternal('https://t.me/Linux_EN_OS')" class="dev-link">
+                    <span class="dev-icon">💬</span>
+                    <span>Telegram</span>
+                </div>
+            </div>
+
+            <div class="setting-info">
+                <span>EN-OS System Manager v 1.1</span>
+                <span class="path-hint">Config path: ~/.config/enos_manager/</span>
+            </div>
+        </div>
+    </aside>
+
+    <script>
+        const translations = {
+            en: {
+                app_title: "EN-OS System Manager", settings: "Settings", theme: "Theme", language: "Language",
+                developer: "Developer - Endscape", driver_manager: "Driver Manager", package_manager: "Package Manager",
+                remote_assistant: "Remote Assistant", zapret_manager: "Zapret Manager",
+                mini_tweaker: "Mini Tweaker",
+                pacman_keys: "Automatic Pacman Key Initialization",
+                zram_control: "ZRAM Manager",
+                refresh_mirrors: "Refresh Mirrors",
+                clear_journal: "Clear Journal (2w)",
+                run: "Run"
+            },
+            ru: {
+                app_title: "EN-OS System Manager", settings: "Настройки", theme: "Тема", language: "Язык",
+                developer: "Разработчик - Endscape", driver_manager: "Менеджер драйверов", package_manager: "Установка пакетов",
+                remote_assistant: "Удаленный помощник", zapret_manager: "Zapret",
+                mini_tweaker: "Мини-твикер",
+                pacman_keys: "Авто-инициализация ключей Pacman",
+                zram_control: "Управление ZRAM",
+                refresh_mirrors: "Обновить зеркала",
+                clear_journal: "Очистить логи (2н)",
+                run: "Запуск"
+            },
+            uk: {
+                app_title: "EN-OS System Manager", settings: "Налаштування", theme: "Тема", language: "Мова",
+                developer: "Розробник - Endscape", driver_manager: "Драйвери", package_manager: "Пакети",
+                remote_assistant: "Помічник", zapret_manager: "Zapret",
+                mini_tweaker: "Міні-твікер",
+                pacman_keys: "Авто-ініціалізація ключів Pacman",
+                zram_control: "Керування ZRAM",
+                refresh_mirrors: "Оновити дзеркала",
+                clear_journal: "Очистити логи (2т)",
+                run: "Запуск"
+            },
+            es: {
+                app_title: "EN-OS System Manager", settings: "Configuración", theme: "Tema", language: "Idioma",
+                developer: "Desarrollador - Endscape", driver_manager: "Controladores", package_manager: "Paquetes",
+                remote_assistant: "Asistencia", zapret_manager: "Zapret",
+                mini_tweaker: "Mini Tweaker",
+                pacman_keys: "Inicialización automática de llaves Pacman",
+                zram_control: "Gestión ZRAM",
+                refresh_mirrors: "Actualizar espejos",
+                clear_journal: "Limpiar registros",
+                run: "Ejecutar"
+            },
+            de: {
+                app_title: "EN-OS System Manager", settings: "Einstellungen", theme: "Design", language: "Sprache",
+                developer: "Entwickler - Endscape", driver_manager: "Treiber", package_manager: "Pakete",
+                remote_assistant: "Fernwartung", zapret_manager: "Zapret",
+                mini_tweaker: "Mini Tweaker",
+                pacman_keys: "Automatische Pacman-Schlüsselinitialisierung",
+                zram_control: "ZRAM verwalten",
+                refresh_mirrors: "Spiegel aktualisieren",
+                clear_journal: "Logs löschen",
+                run: "Start"
+            },
+            fr: {
+                app_title: "EN-OS System Manager", settings: "Paramètres", theme: "Thème", language: "Langue",
+                developer: "Développeur - Endscape", driver_manager: "Pilotes", package_manager: "Paquets",
+                remote_assistant: "Assistance", zapret_manager: "Zapret",
+                mini_tweaker: "Mini Tweaker",
+                pacman_keys: "Initialisation automatique des clés Pacman",
+                zram_control: "Gestion ZRAM",
+                refresh_mirrors: "Mettre à jour miroirs",
+                clear_journal: "Vider les logs",
+                run: "Lancer"
+            },
+            zh: {
+                app_title: "EN-OS System Manager", settings: "设置", theme: "主题", language: "语言",
+                developer: "开发者 - Endscape", driver_manager: "驱动管理", package_manager: "软件管理",
+                remote_assistant: "远程协助", zapret_manager: "Zapret 管理",
+                mini_tweaker: "迷你优化器",
+                pacman_keys: "Pacman 密钥自动初始化",
+                zram_control: "ZRAM 管理",
+                refresh_mirrors: "刷新镜像源",
+                clear_journal: "清理日志",
+                run: "运行"
+            },
+            ja: {
+                app_title: "EN-OS System Manager", settings: "設定", theme: "テーマ", language: "言語",
+                developer: "開発者 - Endscape", driver_manager: "ドライバー", package_manager: "パッケージ",
+                remote_assistant: "リモート", zapret_manager: "Zapret",
+                mini_tweaker: "ミニ・ツイーカー",
+                pacman_keys: "Pacmanキーの自動初期化",
+                zram_control: "ZRAM管理",
+                refresh_mirrors: "ミラーの更新",
+                clear_journal: "ログの削除",
+                run: "実行"
+            },
+            ko: {
+                app_title: "EN-OS System Manager", settings: "설정", theme: "테마", language: "언어",
+                developer: "개발자 - Endscape", driver_manager: "드라이버", package_manager: "패키지",
+                remote_assistant: "원격 지원", zapret_manager: "Zapret",
+                mini_tweaker: "미니 트위커",
+                pacman_keys: "Pacman 키 자동 초기화",
+                zram_control: "ZRAM 관리",
+                refresh_mirrors: "미러 업데이트",
+                clear_journal: "로그 정리",
+                run: "실행"
+            },
+            hi: {
+                app_title: "EN-OS प्रबंधक", settings: "सेटिंग्स", theme: "थीम", language: "भाषा",
+                developer: "डेवलपर - Endscape", driver_manager: "ड्राइवर", package_manager: "पैकेज",
+                remote_assistant: "रिमोट", zapret_manager: "ज़ैप्रेट",
+                mini_tweaker: "मिनी ट्वीकर",
+                pacman_keys: "पैकमैन कुंजी स्वचालित आरंभीकरण",
+                zram_control: "ZRAM प्रबंधन",
+                refresh_mirrors: "मिरر अपडेट",
+                clear_journal: "लॉग साफ़ करें",
+                run: "चलाएं"
+            }
+        };
+
+        let currentLang = 'en';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const settingsBtn = document.getElementById('settingsBtn');
+            const langSelect = document.getElementById('languageSelect');
+
+            settingsBtn.addEventListener('click', toggleSettings);
+            langSelect.addEventListener('change', (e) => setLanguage(e.target.value));
+
+            if (window.__TAURI__) {
+                await loadTheme();
+                await loadCustomThemes();
+                await loadLanguage();
+            } else {
+                applyTranslations('ru');
+            }
+        });
+
+        function toggleSettings() {
+            document.body.classList.toggle('settings-open');
+        }
+
+        async function toggleTweaker() {
+            const modal = document.getElementById('tweakerModal');
+            const overlay = document.getElementById('overlay');
+
+            // Если мы открываем окно, нужно обновить статусы
+            if (!modal.classList.contains('active')) {
+                await syncTweakStatuses();
+            }
+
+            modal.classList.toggle('active');
+            overlay.classList.toggle('visible');
+        }
+
+        async function syncTweakStatuses() {
+            if (!window.__TAURI__) return;
+
+            try {
+                // Опрашиваем Rust по каждому компоненту
+                const zramActive = await window.__TAURI__.core.invoke('check_prog', { name: 'zram-manager' });
+                const keysActive = await window.__TAURI__.core.invoke('check_prog', { name: 'pacman-key-manager' });
+
+                // Устанавливаем положение переключателей без вызова callTweak (чтобы не запускать команды повторно)
+                document.getElementById('check-zram').checked = zramActive;
+                document.getElementById('check-keys').checked = keysActive;
+            } catch (e) {
+                console.error("Ошибка синхронизации статусов:", e);
+            }
+        }
+
+        function closeAll() {
+            document.body.classList.remove('settings-open');
+            document.getElementById('tweakerModal').classList.remove('active');
+            document.getElementById('overlay').classList.remove('visible');
+        }
+
+        async function runProgram(mode) {
+            if (!window.__TAURI__) {
+                console.log(`[DEV] Run program: ${mode}`);
+                showToast(`Development mode: ${mode} clicked`);
+                return;
+            }
+            try {
+                const res = await window.__TAURI__.core.invoke('startprog', { mode });
+                if(res !== 'OK') showToast(`Error: ${res}`, true);
+            } catch (e) {
+                showToast('Launch failed', true);
+            }
+        }
+
+        async function setLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[lang]?.[key]) el.textContent = translations[lang][key];
+            });
+
+            if (window.__TAURI__) {
+                await window.__TAURI__.core.invoke('set_lang', { lang });
+            }
+        }
+
+        async function loadLanguage() {
+            try {
+                const lang = await window.__TAURI__.core.invoke('curr_lang');
+                if (lang) {
+                    document.getElementById('languageSelect').value = lang;
+                    setLanguage(lang);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // Темы
+        async function changeTheme(name) {
+            if (!window.__TAURI__) {
+                document.querySelectorAll('.theme-chip').forEach(b => b.classList.remove('active'));
+                event.target.classList.add('active');
+                return;
+            }
+
+            try {
+                await window.__TAURI__.core.invoke('set_theme', { name });
+                await loadTheme();
+
+                document.querySelectorAll('.theme-chip').forEach(b => b.classList.toggle('active', b.dataset.theme === name));
+            } catch (e) { showToast('Theme error', true); }
+        }
+
+        async function loadTheme() {
+             try {
+                const config = await window.__TAURI__.core.invoke('config_read');
+                let css = '';
+                const home = await window.__TAURI__.core.invoke('get_home_dir');
+                const path = config.theme === 'default'
+                    ? `${home}/.config/enos_manager/default.css`
+                    : `${home}/.config/enos_manager/${config.theme}`;
+
+                try {
+                    css = await window.__TAURI__.core.invoke('theme_path', { path });
+                } catch {
+                    css = '';
+                }
+                document.getElementById('dynamic-styles').textContent = css;
+
+                // Highlight active
+                const activeBtn = document.querySelector(`.theme-chip[data-theme="${config.theme}"]`);
+                if(activeBtn) {
+                     document.querySelectorAll('.theme-chip').forEach(b => b.classList.remove('active'));
+                     activeBtn.classList.add('active');
+                }
+
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadCustomThemes() {
+            try {
+                const themes = await window.__TAURI__.core.invoke('custom_theme_path');
+                const list = document.getElementById('themeList');
+                const def = list.firstElementChild;
+                list.innerHTML = '';
+                list.appendChild(def);
+
+                themes.forEach(t => {
+                    if (t === 'default.css') return;
+                    const btn = document.createElement('button');
+                    btn.className = 'theme-chip';
+                    btn.dataset.theme = t;
+                    btn.textContent = t.replace('.css', '');
+                    btn.onclick = (e) => changeTheme(t);
+                    list.appendChild(btn);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        async function openExternal(link) {
+            await window.__TAURI__.core.invoke('startlink', { link });
+        }
+
+        async function callTweak(name) {
+            if (!window.__TAURI__) {
+                showToast(`Dev Mode: Tweak ${name} called`);
+                return;
+            }
+            try {
+                const res = await window.__TAURI__.core.invoke('tweak', { name });
+                showToast("Success");
+            } catch (e) {
+                showToast(e, true);
+            }
+        }
+
+        function showToast(msg, isError = false) {
+            const t = document.createElement('div');
+            t.className = `toast ${isError ? 'error' : ''}`;
+            t.textContent = msg;
+            document.body.appendChild(t);
+            requestAnimationFrame(() => t.classList.add('visible'));
+            setTimeout(() => {
+                t.classList.remove('visible');
+                setTimeout(() => t.remove(), 300);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

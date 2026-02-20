@@ -1,0 +1,20 @@
+{
+  "name": "System-Manager",
+  "private": true,
+  "version": "1.1.0",
+  "type": "module",
+  "scripts": {
+    "tauri": "tauri",
+    "build": "tauri build",
+    "dev": "tauri dev",
+    "build:web": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2"
+  }
+}
