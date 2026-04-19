@@ -1,6 +1,6 @@
 [package]
 name = "en-os-system-manager"
-version = "0.1.0"
+version = "1.2.0"
 description = "EN-OS System Manager"
 authors = ["Endscape"]
 edition = "2021"

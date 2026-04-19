@@ -26,13 +26,12 @@ impl Default for Config {
 }
 
 //Открытие программ
-
 #[tauri::command]
 fn startprog(mode: &str) -> String {
     let mut cmd = match mode {
         "driver" => Command::new("enos-driver-manager"),
         "pamac" => Command::new("pamac-manager"),
-        "rassist" => Command::new("enos-assistant-creator"),
+        "rassist" => Command::new("remote-assistant-creator"),
         "zapret" => Command::new("enos-zapret-manager"),
         _ => return "Что то тут не так..".to_string()
     };
@@ -41,7 +40,6 @@ fn startprog(mode: &str) -> String {
         Ok(..) => "OK".to_string().to_string(),
         Err(e) => format!("Ошибка {e}").to_string()
     }
-    // ЭТО НЕ ИИШКА
 }
 
 #[tauri::command]
@@ -147,8 +145,8 @@ fn set_theme(name: String) -> Result<Config, String> {
 
 #[tauri::command]
 fn custom_theme_path() -> Vec<String> {
-    let pathfolder = format!("{}/.config/enos_manager/",var("HOME").unwrap());
-    let pathfile = format!("{}/.config/enos_manager/default.css",var("HOME").unwrap());
+    let pathfolder = format!("{}/.config/en-os/enos_manager/",var("HOME").unwrap());
+    let pathfile = format!("{}/.config/en-os/enos_manager/default.css",var("HOME").unwrap());
     let pathfolder = Path::new(&pathfolder);
     let pathfile = Path::new(&pathfile);
     let _null: Vec<String> = Vec::new();
@@ -218,8 +216,8 @@ fn curr_lang() -> String {
 //Работа с конфигами
 #[tauri::command]
 fn config_read() -> Result<Config, String> {
-    let path = format!("{}/.config/enos_manager/settings.json",var("HOME").unwrap());
-    let path2 = format!("{}/.config/enos_manager/",var("HOME").unwrap());
+    let path = format!("{}/.config/en-os/enos_manager/settings.json",var("HOME").unwrap());
+    let path2 = format!("{}/.config/en-os//enos_manager/",var("HOME").unwrap());
     let path = Path::new(&path);
     let path2 = Path::new(&path2);
 
@@ -255,8 +253,8 @@ fn config_read() -> Result<Config, String> {
 fn config_write(config: Config) -> Result<Config, String> {
     println!("Запись в конфиг..");
 
-    let path = format!("{}/.config/enos_manager/settings.json",var("HOME").unwrap());
-    let path2 = format!("{}/.config/enos_manager/",var("HOME").unwrap());
+    let path = format!("{}/.config/en-os//enos_manager/settings.json",var("HOME").unwrap());
+    let path2 = format!("{}/.config/en-os/enos_manager/",var("HOME").unwrap());
     let path = Path::new(&path);
     let path2 = Path::new(&path2);
 
@@ -277,6 +275,10 @@ fn get_home_dir() -> String {
     env::var("HOME").unwrap_or_else(|_| "/home/user".to_string())
 }
 
+#[tauri::command]
+fn show_window(window: tauri::Window) {
+    window.show().unwrap();
+}
 
 fn mbwayland() -> bool {
     let output = env::var("XDG_SESSION_TYPE").unwrap_or_default();
@@ -289,7 +291,6 @@ fn mbwayland() -> bool {
 }
 
 fn main() {
-    println!("Надеюсь, что вы не ИИ-фоб, и понимаете, что вся эта отладка написана вручную, просто, чтобы вы могли понять, на каком месте программа застряла. Удачного просмотра!");
     match mbwayland() {
         true => {
             set_var("XDG_RUNTIME_DIR", "/tmp/runtime-root");
@@ -300,7 +301,7 @@ fn main() {
     }
 
     tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![startprog, theme_path, set_theme, custom_theme_path, config_read, config_write, get_home_dir, set_lang, curr_lang, startlink, tweak, check_prog])
+    .invoke_handler(tauri::generate_handler![startprog, theme_path, set_theme, custom_theme_path, config_read, config_write, get_home_dir, set_lang, curr_lang, startlink, tweak, check_prog, show_window])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
